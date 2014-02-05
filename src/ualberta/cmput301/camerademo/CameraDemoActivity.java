@@ -1,9 +1,17 @@
 package ualberta.cmput301.camerademo;
 
+import java.io.File;
+import java.util.Date;
+
 import ualberta.cmput301.camerodemo.R;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,11 +48,37 @@ public class CameraDemoActivity extends Activity {
 	// finishes, while startActivityForResult() method will. To retrieve the returned result, you may 
 	// need implement onAcitityResult() method.
 	public void takeAPhoto() {
-		// To Do		
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(this)) ); 
+		startActivityForResult(intent,1);	
 	}
 	
+    private File getTempFile(Context context)
+    {
+	    File path = new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "temp");
+	    if(!path.exists())
+	        path.mkdir();
+	    String fileString = context.getClass().hashCode() + "_" + new Date().getClass().hashCode() + ".bmp";
+	    return new File(path, fileString);
+    }
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// To Do
+		if(data != null)
+		{
+			if(resultCode == RESULT_OK){
+				Bitmap bmp = data.getExtras().getParcelable("data");
+				imageButton.setImageBitmap(bmp);
+				textView.setText("Photo OK");
+			}
+			else if(resultCode == RESULT_CANCELED)
+			{
+				textView.setText("Photo Canceled");
+			}
+			else
+			{
+				textView.setText("Not sure what happened!");
+			}
+		}
 	}	
 	
 	@Override
