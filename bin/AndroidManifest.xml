@@ -23,6 +23,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+            <intent-filter>
+        	<action android:name="android.media.action.IMAGE_CAPTURE"/>
+        	<category android:name="android.intent.category.DEFAULT"/>
+	      	</intent-filter>
+	
+	      	<intent-filter>
+	        	<action android:name="android.media.action.STILL_IMAGE_CAPTURE"/>
+	        	<category android:name="android.intent.category.DEFAULT"/>
+	      	</intent-filter>
+	
+	    	<intent-filter>
+	        	<action android:name="android.media.action.ACTION_IMAGE_CAPTURE"/>
+	        	<category android:name="android.intent.category.DEFAULT"/>
+	      	</intent-filter>
+	      	
         </activity>
     </application>
 

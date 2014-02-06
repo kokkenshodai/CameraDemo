@@ -1,7 +1,10 @@
 package ualberta.cmput301.camerademo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import ualberta.cmput301.camerodemo.R;
 import android.net.Uri;
@@ -12,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,20 +59,33 @@ public class CameraDemoActivity extends Activity {
 	
     private File getTempFile(Context context)
     {
+    	File file = Environment.getExternalStorageDirectory().getAbsoluteFile();
 	    File path = new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "temp");
 	    if(!path.exists())
 	        path.mkdir();
-	    String fileString = context.getClass().hashCode() + "_" + new Date().getClass().hashCode() + ".bmp";
+	    String fileString = "debris.jpg";
 	    return new File(path, fileString);
+    }
+    
+    private File getPicturePath(Intent intent) {
+        Uri uri = (Uri) intent.getExtras().get(MediaStore.EXTRA_OUTPUT);
+        return new File(uri.getPath());
     }
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(data != null)
 		{
 			if(resultCode == RESULT_OK){
-				Bitmap bmp = data.getExtras().getParcelable("data");
-				imageButton.setImageBitmap(bmp);
-				textView.setText("Photo OK");
+				try{
+					//Bitmap bmp = data.getExtras().getParcelable("data");
+					Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(getPicturePath(data)));
+					imageButton.setImageBitmap(Bitmap.createScaledBitmap(bmp, imageButton.getWidth(), imageButton.getHeight(), false));
+					textView.setText("Photo OK");
+				}
+				catch(FileNotFoundException ex)
+				{
+					textView.setText("Photo Could not be read.");
+				}
 			}
 			else if(resultCode == RESULT_CANCELED)
 			{
